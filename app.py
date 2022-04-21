@@ -1,20 +1,18 @@
 # imports
 from flask import Flask, url_for, render_template, redirect # more imports can be added 
-from bitcoin import * # ask peer about these imports
-# from bitcoinrpc.authproxy import AuthServiceProxy, JSONRPCException
+# from bitcoin import * 
+from bitcoinrpc.authproxy import AuthServiceProxy, JSONRPCException
 
 # initializers
 app = Flask(__name__)
-# def connect_to_bitcoind_rpc(self):
-#         for i in range(1,settings.rcp_reconnect_max_retry+1):
-#             try:
-#                 self.proxy = bitcoin.rpc.Proxy()
-#                 return
-#             except http.client.HTTPException:
-#                 print("Caught a connection error from Bitcoind RCP, Reconnecting...(%d/%d)" %(i,settings.rcp_reconnect_max_retry)) 
-# Peer can set this up, not sure how to
+rpc_connection = AuthServiceProxy("http://%s:%s@127.0.0.1:8332"%("username", "password")) # change username and password
+
 
 @app.route('/')
 def index():
-    return "Index"
+    return "Index use / then (get command) to get the command"
+@app.route('/<command>')
+def cmd(command):
+    result = rpc_connection.batch_([["call_function", command]])
+    return result
 
